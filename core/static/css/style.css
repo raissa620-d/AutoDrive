@@ -1,0 +1,361 @@
+/* Reset léger */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html,body { height: 100%; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color: #222; }
+
+/* Container utilitaire */
+.container { width: 92%; max-width: 1200px; margin: 0 auto; }
+
+/* ===== Header ===== */
+.site-header {
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  height: 68px;
+  gap: 20px;
+  justify-content: space-between;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo { width:40px; height:40px; object-fit:contain; }
+.brand-name { font-weight:700; font-size:18px; color:#0f172a; }
+
+/* nav */
+.main-nav {
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+.main-nav a {
+  text-decoration:none;
+  color:#374151;
+  padding:8px 10px;
+  border-radius:6px;
+  font-weight:500;
+  transition: 0.2s;
+}
+.main-nav a:hover {
+  background:#f1f5f9;
+}
+.main-nav a.active {
+  background:#eef2ff;
+  color:#1e3a8a;
+}
+
+/* auth buttons */
+.auth-buttons { display:flex; gap:10px; align-items:center; }
+.btn { cursor:pointer; padding:9px 14px; border-radius:8px; font-weight:600; border: 0; font-size:14px; }
+.btn-outline { background:transparent; border:1px solid #cbd5e1; color:#0f172a; }
+.btn-outline:hover { background:#f8fafc; }
+.btn-primary { background:#0366ff; color:white; }
+.btn-primary:hover { background:#004ec7; }
+
+/* ===== Hero ===== */
+.hero {
+  min-height: 70vh;
+  position: relative;
+
+  /* #### IMAGE DE FOND #### */
+  background-image: url('../images/fond.jpg');
+
+  background-size: cover;
+  background-position: center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height: 100%;
+}
+
+/* overlay for contrast */
+.hero-overlay {
+  width:100%;
+  background: rgba(0,0,0,0.45);
+  padding: 70px 0 90px;
+}
+
+/* content */
+.hero-content {
+  text-align:center;
+  color:#fff;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.hero-content h1 {
+  font-size: clamp(28px, 5vw, 56px);
+  font-weight:800;
+  letter-spacing: -1px;
+  margin-bottom:10px;
+}
+.hero-lead {
+  opacity: 0.9;
+  margin-bottom:28px;
+  font-size: clamp(14px, 1.8vw, 18px);
+}
+
+/* search card */
+.search-card {
+  display: grid;
+  grid-template-columns: 1fr 160px 160px 160px;
+  gap: 14px;
+  align-items:end;
+  background: rgba(255,255,255,0.98);
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.2);
+  width:100%;
+  margin-top: 6px;
+}
+.search-card .field {
+  display:flex;
+  flex-direction:column;
+}
+.search-card label {
+  font-size:12px;
+  color:#6b7280;
+  margin-bottom:6px;
+}
+
+
+
+
+.search-card input[type="text"],
+.search-card input[type="date"] {
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid #e6e9ef;
+  font-size:14px;
+}
+.btn-field .full {
+  width:100%;
+  height:100%;
+  padding:12px 16px;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .main-nav { display:none; }
+  .search-card {
+    grid-template-columns: 1fr;
+  }
+  .search-card .field {
+    align-items:stretch;
+  }
+  .auth-buttons {
+    gap:8px;
+  }
+  .header-inner {
+    height:64px;
+  }
+}
+
+@media (max-width: 520px) {
+  .brand-name { display:none; }
+  .hero-overlay {
+    padding: 40px 0 60px;
+  }
+  .hero-lead {
+    display:none;
+  }
+  .search-card {
+    padding:12px;
+    gap:10px;
+  }
+}
+/* ===== Section type de véhicule ===== */
+
+.vehicle-type-section {
+  background: #f8fafc;
+  padding: 70px 0;
+  text-align: center;
+
+}
+
+.section-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+.popular-cars {
+  position: relative;
+  padding: 80px 0;
+  background: url('../images/fond2.jpg') no-repeat center center/cover;
+}
+
+
+
+
+.section-subtitle {
+  font-size: 15px;
+  opacity: 0.7;
+  max-width: 700px;
+  margin: 0 auto 40px;
+}
+
+.vehicle-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+
+.type-card {
+  width: 100%;
+  background: white;
+  padding: 20px 10px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.type-card:hover {
+  border-color: #cbd5e1;
+  transform: scale(1.04);
+}
+
+.type-card.active,
+.type-card:active {
+  background: #eef2ff;
+  border-color: #6366f1;
+}
+.logo{
+width: 80px;
+}
+
+.type-card .icon {
+  display:block;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.type-card p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Responsive */
+@media(max-width:600px) {
+  .section-title { font-size: 22px; }
+}
+.popular-cars {
+  text-align: center;
+  padding: 60px 0;
+}
+
+.popular-cars h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.popular-cars p {
+  color: #64748b;
+  margin-bottom: 40px;
+}
+
+.car-list {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.car-card {
+  background: #fff;
+  width: 300px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding-bottom: 20px;
+  transition: 0.3s;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 26px rgba(0,0,0,0.15);
+}
+
+.car-image {
+  position: relative;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}
+
+.car-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.price {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #2563eb;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.car-card h3 {
+  margin: 15px 0 5px;
+}
+
+.car-card .type {
+  color: #475569;
+  font-size: 14px;
+}
+
+.car-details {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+  color: #475569;
+  font-size: 14px;
+}
+
+.car-details li {
+  margin: 4px 0;
+}
+
+.reserve-btn {
+  display: block;
+  margin: 0 auto;
+  background: #2563eb;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reserve-btn:hover {
+  background: #1d4ed8;
+}
+
+.see-all {
+  margin-top: 30px;
+  padding: 10px 25px;
+  background: white;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.see-all:hover {
+  background: #f1f5f9;
+}

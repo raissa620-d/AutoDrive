@@ -17,7 +17,8 @@
 
       <nav class="main-nav">
         <a href="#" class="active">Accueil</a>
-        <a href="#">Véhicules</a>
+        <a href="{% url 'liste_véhicules' %}">Voir les véhicules</a>
+
         <a href="#">Réservations</a>
         <a href="#">Agences</a>
         <a href="#">Contact</a>
@@ -192,9 +193,53 @@
 
   <footer class="site-footer">
     <div class="container">
-      <small>© {{ now.year }} AutoDrive — Tous droits réservés</small>
+      <small></small>
     </div>
   </footer>
+<footer class="footer">
+  <div class="footer-container">
+
+    <div class="footer-section">
+      <h3 class="logo">AutoDrive</h3>
+      <p>Votre partenaire de confiance pour la location de voitures en toute simplicité.</p>
+    </div>
+
+    <div class="footer-section">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Véhicules</a></li>
+        <li><a href="#">Réservations</a></li>
+        <li><a href="#">Agences</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <ul>
+        <li>📍 Lomé, Togo</li>
+        <li>📞 +228 90 00 00 00</li>
+        <li>📧 contact@autodrive.com</li>
+      </ul>
+    </div>
+
+    <div class="footer-section">
+      <h4>Suivez-nous</h4>
+      <div class="social-icons">
+        <a href="#">🌐</a>
+        <a href="#">📘</a>
+        <a href="#">📸</a>
+        <a href="#">🐦</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2025 AutoDrive - Tous droits réservés
+  </div>
+</footer>
 
 </body>
 </html>

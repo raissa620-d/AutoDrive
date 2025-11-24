@@ -1,0 +1,221 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f8fafc;
+}
+
+/* -------- HEADER -------- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.header .logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.header nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #374151;
+}
+
+.header .active {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+/* -------- STRUCTURE -------- */
+.main-content {
+    display: flex;
+    padding: 20px;
+}
+
+/* -------- FILTRES -------- */
+.filters {
+    width: 250px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    height: fit-content;
+    border: 1px solid #e5e7eb;
+}
+
+.filters h3 {
+    margin-top: 20px;
+}
+
+.filters label {
+    display: block;
+    margin: 6px 0;
+}
+
+.btn-reset {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background: #e5e7eb;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+/* -------- VEHICULES -------- */
+.vehicles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* minimum 250px, maximum 1fr */
+    gap: 25px;
+    margin: 30px;
+}
+
+/* Carte de véhicule */
+.vehicle-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* animation dynamique */
+    cursor: pointer;
+}
+
+/* Animation au survol */
+.vehicle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Image du véhicule */
+.vehicle-card img {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* Prix */
+.price {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #2563eb;
+    padding: 6px 12px;
+    color: white;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* Titre et catégorie */
+.vehicle-card h2 {
+    margin: 15px 0 5px 0;
+    font-size: 18px;
+}
+
+.vehicle-card .category {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Info véhicule */
+.vehicle-card .info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+    font-size: 13px;
+}
+
+/* Boutons d'action */
+.vehicle-card .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.vehicle-card .btn-outline {
+    padding: 8px 12px;
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.vehicle-card .btn-outline:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.vehicle-card .btn-primary {
+    padding: 8px 12px;
+    background: #2563eb;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    transition: background 0.3s;
+}
+
+.vehicle-card .btn-primary:hover {
+    background: #1e40af;
+}
+
+
+.category {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.info {
+    display: grid;
+    margin-top: 10px;
+    gap: 5px;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn-outline {
+    padding: 10px 16px;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-primary {
+    padding: 10px 16px;
+    background: #2563eb;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* -------- FOOTER -------- */
+.footer {
+    margin-top: 50px;
+    background: #0f172a;
+    color: white;
+    padding: 40px 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.footer a {
+    color: #cbd5e1;
+    display: block;
+    margin: 8px 0;
+    text-decoration: none;
+}
+
+.footer p {
+    color: #cbd5e1;
+}

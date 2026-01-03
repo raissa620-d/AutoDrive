@@ -1,0 +1,374 @@
+{% load static %}
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement - AutoDrive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+         body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('{% static "images/fondPaie.jpg" %}') no-repeat center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Overlay pour assombrir l'image et rendre le texte lisible */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .payment-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .payment-header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .payment-header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .payment-body {
+            padding: 40px;
+        }
+
+        .reservation-summary {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .total-amount {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            border: 2px dashed #667eea;
+        }
+
+        .total-amount .label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .total-amount .amount {
+            font-size: 2.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .payment-method-icon {
+            margin-right: 10px;
+        }
+
+        .btn-pay {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-pay:active {
+            transform: translateY(0);
+        }
+
+        .btn-pay.processing {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .processing-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .processing-overlay.active {
+            display: flex;
+        }
+
+        .processing-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .processing-text {
+            font-size: 1.3em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .security-badge::before {
+            content: "🔒";
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            color: #764ba2;
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .payment-body {
+                padding: 25px;
+            }
+
+            .payment-header h1 {
+                font-size: 1.5em;
+            }
+
+            .total-amount .amount {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1>💳 Paiement Sécurisé</h1>
+            <p>Finalisez votre réservation</p>
+        </div>
+
+        <div class="payment-body">
+            <div class="reservation-summary">
+                <h3 style="color: #667eea; margin-bottom: 20px;">📋 Récapitulatif de la réservation</h3>
+
+                <div class="summary-row">
+                    <span class="summary-label">🚗 Véhicule :</span>
+                    <span class="summary-value">{{ reservation.vehicule.marque }} {{ reservation.vehicule.modele }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">👤 Client :</span>
+                    <span class="summary-value">{{ reservation.client.prenom }} {{ reservation.client.nom }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">📅 Du :</span>
+                    <span class="summary-value">{{ reservation.date_debut|date:"d/m/Y" }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">📅 Au :</span>
+                    <span class="summary-value">{{ reservation.date_fin|date:"d/m/Y" }}</span>
+                </div>
+
+                <div class="total-amount">
+                    <div class="label">MONTANT TOTAL À PAYER</div>
+                    <div class="amount">{{ reservation.montant_total }} FCFA</div>
+                </div>
+            </div>
+
+            <form method="POST" id="paymentForm">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="mode_paiement">💰 Choisissez votre mode de paiement</label>
+                    <select name="mode_paiement" id="mode_paiement" required>
+                        <option value="">-- Sélectionnez --</option>
+                        <option value="carte_bancaire">💳 Carte Bancaire</option>
+                        <option value="tmoney">📱 TMoney</option>
+                        <option value="flooz">📱 Flooz</option>
+                        <option value="virement">🏦 Virement Bancaire</option>
+                        <option value="especes">💵 Paiement en Espèces (à l'agence)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-pay" id="btnPay">
+                    🔒 Payer {{ reservation.montant_total }} FCFA
+                </button>
+
+                <div class="security-badge">
+                    Paiement 100% sécurisé et crypté
+                </div>
+            </form>
+
+            <a href="{% url 'liste_vehicules' %}" class="back-link">← Retour aux véhicules</a>
+        </div>
+    </div>
+
+    <!-- Overlay de traitement -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="processing-content">
+            <div class="spinner"></div>
+            <div class="processing-text">Traitement du paiement en cours...</div>
+            <p style="color: #666; margin-top: 10px;">Veuillez patienter</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            const modeSelect = document.getElementById('mode_paiement');
+
+            if (!modeSelect.value) {
+                e.preventDefault();
+                alert('⚠️ Veuillez sélectionner un mode de paiement');
+                return;
+            }
+
+            // Afficher l'overlay de traitement
+            document.getElementById('processingOverlay').classList.add('active');
+
+            // Désactiver le bouton
+            const btn = document.getElementById('btnPay');
+            btn.classList.add('processing');
+            btn.textContent = '⏳ Traitement en cours...';
+            btn.disabled = true;
+        });
+    </script>
+</body>
+</html>

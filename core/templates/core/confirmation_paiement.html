@@ -1,0 +1,393 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement Confirmé - AutoDrive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+         body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('{% static "images/fondPaie.jpg" %}') no-repeat center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Overlay pour assombrir l'image et rendre le texte lisible */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: checkmark 0.8s ease-in-out;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0) rotate(-45deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(0deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .success-header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .success-header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .confirmation-body {
+            padding: 40px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #28a745;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            color: #667eea;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .info-grid {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #333;
+            text-align: right;
+        }
+
+        .payment-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
+        .total-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .total-box .label {
+            font-size: 1em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .total-box .amount {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9fa;
+        }
+
+        .reference-number {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .reference-number .label {
+            color: #856404;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .reference-number .number {
+            font-size: 1.5em;
+            color: #856404;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .next-steps {
+            background: #e7f3ff;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .next-steps h4 {
+            color: #1976D2;
+            margin-bottom: 15px;
+        }
+
+        .next-steps ul {
+            margin-left: 20px;
+            color: #333;
+        }
+
+        .next-steps li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .confirmation-body {
+                padding: 25px;
+            }
+
+            .success-header h1 {
+                font-size: 1.6em;
+            }
+
+            .success-icon {
+                font-size: 60px;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="success-header">
+            <div class="success-icon">✅</div>
+            <h1>Paiement Réussi !</h1>
+            <p>Votre réservation est confirmée</p>
+        </div>
+
+        <div class="confirmation-body">
+            <div class="alert-success">
+                🎉 Félicitations ! Votre paiement a été traité avec succès. Vous allez recevoir un email de confirmation à {{ reservation.client.email }}
+            </div>
+
+            <!-- Informations de la réservation -->
+            <div class="section">
+                <h3 class="section-title">🚗 Détails de la Réservation</h3>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <span class="info-label">Véhicule</span>
+                        <span class="info-value">{{ reservation.vehicule.marque }} {{ reservation.vehicule.modele }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Immatriculation</span>
+                        <span class="info-value">{{ reservation.vehicule.immatriculation }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Date de début</span>
+                        <span class="info-value">{{ reservation.date_debut|date:"d/m/Y" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Date de fin</span>
+                        <span class="info-value">{{ reservation.date_fin|date:"d/m/Y" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Statut</span>
+                        <span class="info-value"><span class="payment-badge">{{ reservation.statut|upper }}</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informations du client -->
+            <div class="section">
+                <h3 class="section-title">👤 Informations Client</h3>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <span class="info-label">Nom complet</span>
+                        <span class="info-value">{{ reservation.client.prenom }} {{ reservation.client.nom }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">{{ reservation.client.email }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Téléphone</span>
+                        <span class="info-value">{{ reservation.client.telephone }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Détails du paiement -->
+            <div class="section">
+                <h3 class="section-title">💳 Détails du Paiement</h3>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <span class="info-label">Méthode de paiement</span>
+                        <span class="info-value">{{ paiement.mode_paiement|title }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Date du paiement</span>
+                        <span class="info-value">{{ paiement.date_paiement|date:"d/m/Y à H:i" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">ID de transaction</span>
+                        <span class="info-value">#{{ paiement.id }}{{ reservation.id }}2024</span>
+                    </div>
+                </div>
+
+                <div class="total-box">
+                    <div class="label">MONTANT PAYÉ</div>
+                    <div class="amount">{{ paiement.montant }} FCFA</div>
+                </div>
+            </div>
+
+            <!-- Numéro de référence -->
+            <div class="reference-number">
+                <div class="label">📋 NUMÉRO DE RÉSERVATION</div>
+                <div class="number">RES-{{ reservation.id|stringformat:"05d" }}</div>
+            </div>
+
+            <!-- Prochaines étapes -->
+            <div class="next-steps">
+                <h4>📌 Prochaines étapes :</h4>
+                <ul>
+                    <li>Un email de confirmation a été envoyé à votre adresse</li>
+                    <li>Présentez-vous à l'agence le {{ reservation.date_debut|date:"d/m/Y" }} avec votre pièce d'identité</li>
+                    <li>N'oubliez pas votre numéro de réservation : <strong>RES-{{ reservation.id|stringformat:"05d" }}</strong></li>
+                    <li>Contactez-nous au +228 22 XX XX XX pour toute question</li>
+                </ul>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="action-buttons">
+                <a href="{% url 'liste_vehicules' %}" class="btn btn-primary">
+                    🏠 Retour à l'accueil
+                </a>
+                <button

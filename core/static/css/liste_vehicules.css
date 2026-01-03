@@ -31,13 +31,14 @@ body {
 
 /* -------- STRUCTURE -------- */
 .main-content {
-    display: flex;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
     padding: 20px;
 }
 
 /* -------- FILTRES -------- */
 .filters {
-    width: 250px;
     background: white;
     padding: 20px;
     border-radius: 10px;
@@ -54,48 +55,90 @@ body {
     margin: 6px 0;
 }
 
+.filters input,
+.filters select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    margin-top: 4px;
+}
+
 .btn-reset {
-    margin-top: 20px;
+    margin-top: 12px;
     width: 100%;
     padding: 10px;
     background: #e5e7eb;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-}
-/* -------- VEHICULES -------- */
-.vehicles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* minimum 250px, maximum 1fr */
-    gap: 25px;
-    margin: 30px;
+    text-align: center;
+    display: inline-block;
+    color: #111827;
+    text-decoration: none;
 }
 
-/* Carte de véhicule */
+.btn-primary.full {
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+}
+
+.map-panel {
+    margin-top: 24px;
+}
+
+.map-panel h4 {
+    margin-bottom: 8px;
+}
+
+.map-container {
+    height: 260px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+/* -------- VEHICULES -------- */
+.vehicles-section {
+    width: 100%;
+}
+
+.vehicles-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 10px 10px;
+}
+
+.vehicles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin: 10px;
+}
+
 .vehicle-card {
     background: white;
     padding: 20px;
     border-radius: 12px;
     border: 1px solid #e5e7eb;
     position: relative;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* animation dynamique */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
-/* Animation au survol */
 .vehicle-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Image du véhicule */
 .vehicle-card img {
     width: 100%;
     border-radius: 10px;
     object-fit: cover;
 }
 
-/* Prix */
 .price {
     position: absolute;
     top: 20px;
@@ -107,7 +150,6 @@ body {
     font-size: 13px;
 }
 
-/* Titre et catégorie */
 .vehicle-card h2 {
     margin: 15px 0 5px 0;
     font-size: 18px;
@@ -118,7 +160,6 @@ body {
     color: #6b7280;
 }
 
-/* Info véhicule */
 .vehicle-card .info {
     display: flex;
     flex-wrap: wrap;
@@ -127,7 +168,6 @@ body {
     font-size: 13px;
 }
 
-/* Boutons d'action */
 .vehicle-card .actions {
     display: flex;
     gap: 10px;
@@ -162,7 +202,6 @@ body {
 .vehicle-card .btn-primary:hover {
     background: #1e40af;
 }
-
 
 .category {
     color: #64748b;
@@ -199,6 +238,15 @@ body {
     text-decoration: none;
 }
 
+.empty-state {
+    background: #fff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 24px;
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
 /* -------- FOOTER -------- */
 .footer {
     margin-top: 50px;
@@ -207,6 +255,7 @@ body {
     padding: 40px 20px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }
 
 .footer a {
@@ -218,4 +267,43 @@ body {
 
 .footer p {
     color: #cbd5e1;
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.message {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+}
+.message.success {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.form-grid label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.form-grid input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    margin-top: 6px;
 }

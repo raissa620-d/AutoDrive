@@ -1,0 +1,186 @@
+{% load static %}
+
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des véhicules</title>
+    <link rel="stylesheet" href="{% static 'css/liste_vehicules.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo">AutoDrive</div>
+        <nav>
+            <a href="{% url 'accueil' %}">Accueil</a>
+            <a href="{% url 'liste_vehicules' %}" class="active">Véhicules</a>
+            <a href="#">Réservations</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <aside class="filters">
+            <h3>Filtrer</h3>
+            <form method="get">
+                <label>Ville
+                    <input type="text" name="ville" value="{{ filters.ville }}" placeholder="Ex: Lomé">
+                </label>
+
+                <h3>Catégorie</h3>
+                <label>
+                    <select name="categorie">
+                        <option value="">Toutes</option>
+                        <option value="citadine" {% if filters.categorie == 'citadine' %}selected{% endif %}>Citadine</option>
+                        <option value="compacte" {% if filters.categorie == 'compacte' %}selected{% endif %}>Compacte</option>
+                        <option value="berline" {% if filters.categorie == 'berline' %}selected{% endif %}>Berline</option>
+                        <option value="suv" {% if filters.categorie == 'suv' %}selected{% endif %}>SUV</option>
+                        <option value="utilitaire" {% if filters.categorie == 'utilitaire' %}selected{% endif %}>Utilitaire</option>
+                    </select>
+                </label>
+
+                <h3>Prix max (FCFA/jour)</h3>
+                <label>
+                    <input type="number" name="prix_max" min="0" step="500" value="{{ filters.prix_max }}" placeholder="Ex: 30000">
+                </label>
+
+                <h3>Transmission</h3>
+                <label>
+                    <select name="transmission">
+                        <option value="">Tout</option>
+                        <option value="manuelle" {% if filters.transmission == 'manuelle' %}selected{% endif %}>Manuelle</option>
+                        <option value="automatique" {% if filters.transmission == 'automatique' %}selected{% endif %}>Automatique</option>
+                    </select>
+                </label>
+
+                <h3>Carburant</h3>
+                <label>
+                    <select name="carburant">
+                        <option value="">Tout</option>
+                        <option value="essence" {% if filters.carburant == 'essence' %}selected{% endif %}>Essence</option>
+                        <option value="diesel" {% if filters.carburant == 'diesel' %}selected{% endif %}>Diesel</option>
+                        <option value="electrique" {% if filters.carburant == 'electrique' %}selected{% endif %}>Électrique</option>
+                        <option value="hybride" {% if filters.carburant == 'hybride' %}selected{% endif %}>Hybride</option>
+                    </select>
+                </label>
+
+                <button type="submit" class="btn-primary full">Appliquer les filtres</button>
+                <a class="btn-reset" href="{% url 'liste_vehicules' %}">Réinitialiser</a>
+            </form>
+
+            <div class="map-panel">
+                <h4>Carte des véhicules</h4>
+                <div id="vehicules-map" class="map-container"></div>
+            </div>
+        </aside>
+
+        <section class="vehicles-section">
+            <div class="vehicles-header">
+                <div>
+                    <h1>Véhicules disponibles</h1>
+                    <p>{{ vehicules|length }} résultat{{ vehicules|length|pluralize:"s" }}</p>
+                </div>
+                <a class="btn-outline" href="{% url 'accueil' %}">Retour à l’accueil</a>
+            </div>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class="vehicles">
+                {% for vehicule in vehicules %}
+                    <article class="vehicle-card">
+                        <span class="price">{{ vehicule.prix_jour|floatformat:"0" }} FCFA/jour</span>
+                        <img src="{% if vehicule.photo %}{{ vehicule.photo.url }}{% else %}{% static 'images/Voiture2.jpg' %}{% endif %}" alt="{{ vehicule }}">
+
+                        <h2>{{ vehicule.marque }} {{ vehicule.modele }}</h2>
+                        <p class="category">{{ vehicule.get_categorie_display }}</p>
+
+                        <div class="info">
+                            <span>⚙️ {{ vehicule.get_transmission_display }}</span>
+                            <span>🛢️ {{ vehicule.get_carburant_display }}</span>
+                            <span>🧍 {{ vehicule.places }} places</span>
+                            <span>📍 {{ vehicule.ville|default:"Lieu à confirmer" }}</span>
+                        </div>
+
+                        <div class="actions">
+                            <a class="btn-outline" href="#">Voir détails</a>
+                            <a class="btn-primary" href="{% url 'reserver_vehicule' vehicule.id %}">Réserver</a>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="empty-state">
+                        <p>Aucun véhicule ne correspond aux filtres. Essayez d’élargir la recherche.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div>
+            <h3>AutoDrive</h3>
+            <p>Votre partenaire de confiance pour la location de véhicules.</p>
+        </div>
+
+        <div>
+            <h4>Services</h4>
+            <a href="#">Location de voitures</a>
+            <a href="#">Réservation en ligne</a>
+            <a href="#">Nos agences</a>
+            <a href="#">Assurance véhicule</a>
+        </div>
+
+        <div>
+            <h4>Support</h4>
+            <a href="#">Centre d’aide</a>
+            <a href="#">Contact</a>
+            <a href="#">FAQ</a>
+            <a href="#">Assistance 24h/24</a>
+        </div>
+
+        <div>
+            <h4>Contact</h4>
+            <p>123 Avenue des Champs-Élysées <br> 75008 Paris, France</p>
+            <p>+33 1 42 25 96 47</p>
+            <p>contact@autoreserv.fr</p>
+        </div>
+    </footer>
+
+    {{ map_data|json_script:"map-data" }}
+    <script>
+        (function initMap() {
+    const raw = document.getElementById('map-data');
+    if (!raw) return;
+
+    const points = JSON.parse(raw.textContent || '[]');
+    // Centrer systématiquement sur Lomé
+    const loméCenter = [6.1319, 1.2224];
+    const map = L.map('vehicules-map').setView(loméCenter, 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    if (!points.length) {
+        L.marker(loméCenter).addTo(map).bindPopup('Aucun véhicule géolocalisé pour le moment.');
+        return;
+    }
+
+    points.forEach((point) => {
+        const popup = `<strong>${point.label}</strong><br>${point.ville || ''} ${point.adresse || ''}<br>${Number(point.prix_jour || 0).toLocaleString('fr-FR')} / jour`;
+        L.marker([point.lat, point.lng]).addTo(map).bindPopup(popup);
+    });
+})();
+
+    </script>
+</body>
+</html>

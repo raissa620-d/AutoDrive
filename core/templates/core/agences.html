@@ -1,0 +1,202 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agences - AutoDrive</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #333;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Header */
+    .site-header {
+      background: #001f3f;
+      padding: 15px 20px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .site-header .logo {
+      height: 50px;
+      border-radius: 8px;
+    }
+
+    .main-nav a {
+      margin-left: 20px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .main-nav a.active,
+    .main-nav a:hover {
+      background: #FFD700;
+      color: #001f3f;
+    }
+
+    /* Hero section */
+    .hero-agences {
+      background: url("{% static 'images/hero-agences.jpg' %}") center/cover no-repeat;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero-agences::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .hero-agences h1 {
+      position: relative;
+      font-size: 2.8rem;
+      z-index: 1;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Agences grid */
+    .agences-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto 60px auto;
+    }
+
+    .agence-card {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .agence-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+
+    .agence-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .agence-content {
+      padding: 20px;
+      flex: 1;
+    }
+
+    .agence-content h3 {
+      margin: 0 0 10px 0;
+      color: #001f3f;
+      font-size: 1.4rem;
+    }
+
+    .agence-content p {
+      margin: 5px 0;
+      color: #555;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Footer */
+    footer.footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #001f3f;
+      color: #FFD700;
+      font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @media(max-width: 600px){
+      .hero-agences {
+        height: 220px;
+      }
+      .hero-agences h1 {
+        font-size: 2rem;
+      }
+      .agence-card img {
+        height: 150px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <img src="{% static 'images/logo.jpg' %}" alt="AutoDrive" class="logo">
+    <span class="brand-name">AutoDrive</span>
+  </div>
+
+  <nav class="main-nav">
+    <a href="{% url 'accueil' %}">Accueil</a>
+    <a href="{% url 'liste_vehicules' %}">Véhicules</a>
+    <a href="{% url 'agences' %}" class="active">Agences</a>
+    <a href="#">Réservations</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero-agences">
+  <h1>Nos Agences AutoDrive</h1>
+</section>
+
+<!-- Agences list -->
+<section class="agences-section">
+  <div class="agences-container">
+    {% for agence in agences %}
+      <div class="agence-card">
+        <img src="{% if agence.photo %}{{ agence.photo.url }}{% else %}{% static 'images/agence-default.jpg' %}{% endif %}" alt="{{ agence.nom }}">
+        <div class="agence-content">
+          <h3>{{ agence.nom }}</h3>
+          <p>📍 {{ agence.adresse }}</p>
+          <p>📞 {{ agence.telephone }}</p>
+          <p>📧 {{ agence.email }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p style="grid-column: 1/-1; text-align:center; color:#555;">Aucune agence disponible pour le moment.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<footer class="footer">
+  © 2025 AutoDrive - Tous droits réservés
+</footer>
+
+</body>
+</html>

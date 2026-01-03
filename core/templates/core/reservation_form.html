@@ -1,0 +1,105 @@
+{% load static %}
+
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réserver {{ vehicule }}</title>
+    <link rel="stylesheet" href="{% static 'css/liste_vehicules.css' %}">
+</head>
+<body>
+<style>
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('{% static "images/fondRes.jpg" %}') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Overlay pour assombrir l'image et rendre le texte lisible */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+}
+</style>
+    <header class="header">
+        <div class="logo">AutoDrive</div>
+        <nav>
+            <a href="{% url 'accueil' %}">Accueil</a>
+            <a href="{% url 'liste_vehicules' %}">Véhicules</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="vehicles-section" style="grid-column: 1 / -1;">
+            <div class="vehicles-header">
+                <div>
+                    <h1>Réserver {{ vehicule.marque }} {{ vehicule.modele }}</h1>
+                    <p>{{ vehicule.get_categorie_display }} - {{ vehicule.prix_jour|floatformat:"0" }} FCFA / jour</p>
+                </div>
+                <a class="btn-outline" href="{% url 'liste_vehicules' %}">Retour</a>
+            </div>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="message {{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class="vehicle-card" style="max-width: 520px;">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        {{ form.non_field_errors }}
+                        <label>Nom
+                            {{ form.nom }}
+                            {{ form.nom.errors }}
+                        </label>
+                        <label>Prénom
+                            {{ form.prenom }}
+                            {{ form.prenom.errors }}
+                        </label>
+                        <label>Email
+                            {{ form.email }}
+                            {{ form.email.errors }}
+                        </label>
+                        <label>Téléphone
+                            {{ form.telephone }}
+                            {{ form.telephone.errors }}
+                        </label>
+                        <label>Adresse
+                            {{ form.adresse }}
+                            {{ form.adresse.errors }}
+                        </label>
+                        <label>Date de début
+                            {{ form.date_debut }}
+                            {{ form.date_debut.errors }}
+                        </label>
+                        <label>Date de fin
+                            {{ form.date_fin }}
+                            {{ form.date_fin.errors }}
+                        </label>
+                    </div>
+
+                    <div class="actions" style="margin-top:16px; justify-content:flex-end;">
+                        <a class="btn-outline" href="{% url 'liste_vehicules' %}">Annuler</a>
+                        <button type="submit" class="btn-primary">Confirmer la réservation</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

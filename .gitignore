@@ -1,0 +1,13 @@
+# Django
+db.sqlite3
+*.pyc
+__pycache__/
+
+# Environnement virtuel (TRÈS IMPORTANT de ne pas l'envoyer)
+venv/
+env/
+ENV/
+
+# Divers
+.vscode/
+media/

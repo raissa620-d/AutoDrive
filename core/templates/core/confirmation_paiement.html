@@ -4,390 +4,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paiement Confirmé - AutoDrive</title>
+    <title>Confirmation de Réservation - AutoDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --success: #10b981;
+            --primary: #6366f1;
+            --dark: #0f172a;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.95);
         }
 
-         body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('{% static "images/fondPaie.jpg" %}') no-repeat center fixed;
-    background-size: cover;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    position: relative;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Overlay pour assombrir l'image et rendre le texte lisible */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: url('{% static "images/fondPaie.jpg" %}') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Overlay pour la profondeur */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: -1;
+        }
+
+        .confirmation-card {
+            background: var(--glass);
+            width: 100%;
+            max-width: 800px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
+        /* --- HEADER --- */
         .success-header {
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            background: var(--success);
             color: white;
-            padding: 50px 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .success-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            animation: checkmark 0.8s ease-in-out;
-        }
-
-        @keyframes checkmark {
-            0% {
-                transform: scale(0) rotate(-45deg);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.2) rotate(0deg);
-            }
-            100% {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-            }
-        }
-
-        .success-header h1 {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-        }
-
-        .success-header p {
-            font-size: 1.1em;
-            opacity: 0.95;
-        }
-
-        .confirmation-body {
             padding: 40px;
+            text-align: center;
+            background-image: linear-gradient(135deg, #059669 0%, #10b981 100%);
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 5px solid #28a745;
-            margin-bottom: 30px;
-            font-weight: 500;
-        }
-
-        .section {
-            margin-bottom: 35px;
-        }
-
-        .section-title {
-            color: #667eea;
-            font-size: 1.4em;
-            margin-bottom: 20px;
+        .check-container {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            animation: pulse 2s infinite;
         }
 
-        .info-grid {
-            background: #f8f9fa;
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* --- CONTENT --- */
+        .content-body { padding: 40px; }
+
+        .ref-banner {
+            background: #f0fdf4;
+            border: 1px dashed var(--success);
             border-radius: 12px;
-            padding: 25px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .ref-banner span { color: var(--success); font-weight: 700; letter-spacing: 1px; }
+
+        .grid-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
-        .info-row {
+        .info-box h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .data-list { list-style: none; }
+        .data-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #e0e0e0;
+            padding: 8px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid #f1f5f9;
         }
+        .data-label { color: #94a3b8; }
+        .data-value { font-weight: 600; color: var(--dark); }
 
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: #666;
-            font-weight: 500;
-        }
-
-        .info-value {
-            font-weight: bold;
-            color: #333;
-            text-align: right;
-        }
-
-        .payment-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.95em;
-        }
-
-        .total-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* --- TOTAL BOX --- */
+        .total-highlight {
+            background: var(--dark);
             color: white;
             padding: 25px;
-            border-radius: 15px;
-            text-align: center;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin: 30px 0;
         }
+        .total-amount { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
 
-        .total-box .label {
-            font-size: 1em;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .total-box .amount {
-            font-size: 2.5em;
-            font-weight: bold;
-        }
-
-        .action-buttons {
+        /* --- ACTIONS --- */
+        .action-area {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-top: 30px;
         }
 
         .btn {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
+            padding: 14px;
+            border-radius: 12px;
             text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-secondary:hover {
-            background: #f8f9fa;
-        }
-
-        .reference-number {
-            background: #fff3cd;
-            border: 2px dashed #ffc107;
-            padding: 20px;
-            border-radius: 10px;
+            font-weight: 700;
             text-align: center;
-            margin-top: 30px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
         }
 
-        .reference-number .label {
-            color: #856404;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
+        .btn-home { background: var(--primary); color: white; }
+        .btn-print { background: #e2e8f0; color: var(--dark); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
-        .reference-number .number {
-            font-size: 1.5em;
-            color: #856404;
-            font-weight: bold;
-            letter-spacing: 2px;
-            font-family: monospace;
-        }
-
-        .next-steps {
-            background: #e7f3ff;
-            border-left: 5px solid #2196F3;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-        }
-
-        .next-steps h4 {
-            color: #1976D2;
-            margin-bottom: 15px;
-        }
-
-        .next-steps ul {
-            margin-left: 20px;
-            color: #333;
-        }
-
-        .next-steps li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 768px) {
-            .confirmation-body {
-                padding: 25px;
-            }
-
-            .success-header h1 {
-                font-size: 1.6em;
-            }
-
-            .success-icon {
-                font-size: 60px;
-            }
-
-            .action-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .info-row {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .info-value {
-                text-align: left;
-            }
+        @media (max-width: 600px) {
+            .grid-info { grid-template-columns: 1fr; }
+            .action-area { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="confirmation-container">
+
+    <div class="confirmation-card">
         <div class="success-header">
-            <div class="success-icon">✅</div>
-            <h1>Paiement Réussi !</h1>
-            <p>Votre réservation est confirmée</p>
+            <div class="check-container">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h1>Réservation Confirmée !</h1>
+            <p>Merci pour votre confiance, votre véhicule vous attend.</p>
         </div>
 
-        <div class="confirmation-body">
-            <div class="alert-success">
-                🎉 Félicitations ! Votre paiement a été traité avec succès. Vous allez recevoir un email de confirmation à {{ reservation.client.email }}
+        <div class="content-body">
+            <div class="ref-banner">
+                NUMÉRO DE RÉSERVATION : <span>RES-{{ reservation.id|stringformat:"05d" }}</span>
             </div>
 
-            <!-- Informations de la réservation -->
-            <div class="section">
-                <h3 class="section-title">🚗 Détails de la Réservation</h3>
-                <div class="info-grid">
-                    <div class="info-row">
-                        <span class="info-label">Véhicule</span>
-                        <span class="info-value">{{ reservation.vehicule.marque }} {{ reservation.vehicule.modele }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Immatriculation</span>
-                        <span class="info-value">{{ reservation.vehicule.immatriculation }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Date de début</span>
-                        <span class="info-value">{{ reservation.date_debut|date:"d/m/Y" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Date de fin</span>
-                        <span class="info-value">{{ reservation.date_fin|date:"d/m/Y" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Statut</span>
-                        <span class="info-value"><span class="payment-badge">{{ reservation.statut|upper }}</span></span>
-                    </div>
+            <div class="grid-info">
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-car"></i> Véhicule</h3>
+                    <ul class="data-list">
+                        <li class="data-item">
+                            <span class="data-label">Modèle</span>
+                            <span class="data-value">{{ reservation.vehicule.marque }} {{ reservation.vehicule.modele }}</span>
+                        </li>
+                        <li class="data-item">
+                            <span class="data-label">Plaque</span>
+                            <span class="data-value">{{ reservation.vehicule.immatriculation }}</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3><i class="fa-solid fa-calendar-days"></i> Période</h3>
+                    <ul class="data-list">
+                        <li class="data-item">
+                            <span class="data-label">Début</span>
+                            <span class="data-value">{{ reservation.date_debut|date:"d/m/Y" }}</span>
+                        </li>
+                        <li class="data-item">
+                            <span class="data-label">Fin</span>
+                            <span class="data-value">{{ reservation.date_fin|date:"d/m/Y" }}</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Informations du client -->
-            <div class="section">
-                <h3 class="section-title">👤 Informations Client</h3>
-                <div class="info-grid">
-                    <div class="info-row">
-                        <span class="info-label">Nom complet</span>
-                        <span class="info-value">{{ reservation.client.prenom }} {{ reservation.client.nom }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Email</span>
-                        <span class="info-value">{{ reservation.client.email }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Téléphone</span>
-                        <span class="info-value">{{ reservation.client.telephone }}</span>
-                    </div>
+            <div class="total-highlight">
+                <div>
+                    <p style="font-size: 0.8rem; opacity: 0.7;">MONTANT TOTAL RÉGLÉ</p>
+                    <p style="font-size: 0.9rem;">Via {{ paiement.mode_paiement|title }}</p>
                 </div>
+                <div class="total-amount">{{ paiement.montant }} FCFA</div>
             </div>
 
-            <!-- Détails du paiement -->
-            <div class="section">
-                <h3 class="section-title">💳 Détails du Paiement</h3>
-                <div class="info-grid">
-                    <div class="info-row">
-                        <span class="info-label">Méthode de paiement</span>
-                        <span class="info-value">{{ paiement.mode_paiement|title }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Date du paiement</span>
-                        <span class="info-value">{{ paiement.date_paiement|date:"d/m/Y à H:i" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">ID de transaction</span>
-                        <span class="info-value">#{{ paiement.id }}{{ reservation.id }}2024</span>
-                    </div>
-                </div>
-
-                <div class="total-box">
-                    <div class="label">MONTANT PAYÉ</div>
-                    <div class="amount">{{ paiement.montant }} FCFA</div>
-                </div>
+            <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; font-size: 0.9rem;">
+                <p><strong><i class="fa-solid fa-circle-info"></i> Prochaine étape :</strong> Présentez-vous à l'agence le {{ reservation.date_debut|date:"d/m/Y" }} muni de votre pièce d'identité et de votre permis de conduire original.</p>
             </div>
 
-            <!-- Numéro de référence -->
-            <div class="reference-number">
-                <div class="label">📋 NUMÉRO DE RÉSERVATION</div>
-                <div class="number">RES-{{ reservation.id|stringformat:"05d" }}</div>
-            </div>
-
-            <!-- Prochaines étapes -->
-            <div class="next-steps">
-                <h4>📌 Prochaines étapes :</h4>
-                <ul>
-                    <li>Un email de confirmation a été envoyé à votre adresse</li>
-                    <li>Présentez-vous à l'agence le {{ reservation.date_debut|date:"d/m/Y" }} avec votre pièce d'identité</li>
-                    <li>N'oubliez pas votre numéro de réservation : <strong>RES-{{ reservation.id|stringformat:"05d" }}</strong></li>
-                    <li>Contactez-nous au +228 22 XX XX XX pour toute question</li>
-                </ul>
-            </div>
-
-            <!-- Boutons d'action -->
-            <div class="action-buttons">
-                <a href="{% url 'liste_vehicules' %}" class="btn btn-primary">
-                    🏠 Retour à l'accueil
+            <div class="action-area">
+                <a href="{% url 'accueil' %}" class="btn btn-home">
+                    <i class="fa-solid fa-house"></i> Retour à l'accueil
                 </a>
-                <button
+                <button onclick="window.print()" class="btn btn-print">
+                    <i class="fa-solid fa-print"></i> Imprimer le reçu
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

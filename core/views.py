@@ -2,17 +2,38 @@ from datetime import date
 from decimal import Decimal, InvalidOperation
 import re
 import time
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 
 from .forms import ReservationForm
 from .models import Client, Reservation, Vehicule, Paiement
+# views.py
+from django.shortcuts import render
 
 
+
+
+@login_required
+def dashboard(request):
+    # On récupère uniquement les réservations de l'utilisateur connecté
+    mes_reservations = Reservation.objects.filter(client=request.user)
+
+    return render(request, 'core/dashboard.html', {
+        'reservations': mes_reservations
+    })
+def contact(request):
+    if request.method == 'POST':
+        # Ici vous gérerez plus tard l'envoi de l'email
+        pass
+    return render(request, 'core/contact.html') # vérifiez bien le nom du fichier .html
+
+# ---------------------------
+# Helpers
+# ---------------------------
 def _build_map_data(vehicules):
     points = []
     for vehicule in vehicules:
@@ -30,6 +51,9 @@ def _build_map_data(vehicules):
     return points
 
 
+# ---------------------------
+# Pages publiques
+# ---------------------------
 def accueil(request):
     vehicules = Vehicule.objects.filter(statut="disponible").order_by("prix_jour")[:6]
     context = {
@@ -77,6 +101,90 @@ def liste_vehicules(request):
     return render(request, "core/liste_vehicules.html", context)
 
 
+def agences(request):
+    agences = [
+        {"nom": "AutoDrive Lomé", "adresse": "Quartier A, Rue 123, Lomé", "telephone": "+228 90 00 00 01", "email": "lome@autodrive.com", "lat": 6.1319, "lng": 1.2228, "photo": None},
+        {"nom": "AutoDrive Kara", "adresse": "Quartier B, Rue 456, Kara", "telephone": "+228 90 00 00 02", "email": "kara@autodrive.com", "lat": 9.5509, "lng": 1.1840, "photo": None},
+        {"nom": "AutoDrive Sokodé", "adresse": "Quartier C, Rue 789, Sokodé", "telephone": "+228 90 00 00 03", "email": "sokode@autodrive.com", "lat": 8.9833, "lng": 1.1333, "photo": None},
+    ]
+    return render(request, "core/agences.html", {"agences": agences})
+
+# ---------------------------
+# Inscription / Connexion
+# ---------------------------
+def inscription(request):
+    if request.method == 'POST':
+        nom = request.POST.get('nom')
+        prenom = request.POST.get('prenom')
+        email = request.POST.get('email')
+        telephone = request.POST.get('telephone')
+        adresse = request.POST.get('adresse', '')
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
+
+        if password != password_confirm:
+            messages.error(request, '❌ Les mots de passe ne correspondent pas.')
+            return redirect('accueil')
+
+        pattern = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]).{8,}$'
+        if not re.match(pattern, password):
+            messages.error(request,
+                '❌ Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.')
+            return redirect('accueil')
+
+        if User.objects.filter(username=email).exists():
+            messages.error(request, '❌ Cet email est déjà utilisé.')
+            return redirect('accueil')
+
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=prenom,
+            last_name=nom
+        )
+        Client.objects.create(
+            user=user,
+            telephone=telephone,
+            adresse=adresse
+        )
+
+        login(request, user)
+        messages.success(request, '✅ Inscription réussie ! Bienvenue !')
+        return redirect('dashboard')
+
+    return redirect('accueil')
+
+
+def connexion(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        remember_me = request.POST.get('remember_me')
+        user = authenticate(request, username=email, password=password)
+
+        if user:
+            login(request, user)
+            if not remember_me:
+                request.session.set_expiry(0)
+            messages.success(request, f'✅ Bienvenue {user.first_name} !')
+            return redirect('dashboard')
+        else:
+            messages.error(request, '❌ Email ou mot de passe incorrect.')
+            return redirect('accueil')
+
+    return redirect('accueil')
+
+
+def deconnexion(request):
+    logout(request)
+    messages.success(request, '👋 Vous êtes déconnecté.')
+    return redirect('accueil')
+
+
+# ---------------------------
+# Réservation / Paiement
+# ---------------------------
 def reserver_vehicule(request, vehicule_id: int):
     vehicule = get_object_or_404(Vehicule, pk=vehicule_id, statut="disponible")
     form = ReservationForm(request.POST or None)
@@ -100,22 +208,25 @@ def reserver_vehicule(request, vehicule_id: int):
             if overlap.exists():
                 form.add_error(None, "Ce véhicule est déjà réservé sur ces dates.")
             else:
-                client, _ = Client.objects.get_or_create(
-                    email=data["email"],
-                    defaults={
-                        "nom": data["nom"],
-                        "prenom": data["prenom"],
-                        "telephone": data["telephone"],
-                        "adresse": data.get("adresse", ""),
-                        "mot_de_passe": "",
-                    },
-                )
-                # Mise à jour éventuelle des infos client
-                client.nom = data["nom"]
-                client.prenom = data["prenom"]
-                client.telephone = data["telephone"]
-                client.adresse = data.get("adresse", "")
-                client.save()
+                # Client connecté
+                if request.user.is_authenticated:
+                    client = request.user.client
+                else:
+                    # Client temporaire
+                    client, _ = Client.objects.get_or_create(
+                        email=data["email"],
+                        defaults={
+                            "nom": data["nom"],
+                            "prenom": data["prenom"],
+                            "telephone": data["telephone"],
+                            "adresse": data.get("adresse", ""),
+                        },
+                    )
+                    client.nom = data["nom"]
+                    client.prenom = data["prenom"]
+                    client.telephone = data["telephone"]
+                    client.adresse = data.get("adresse", "")
+                    client.save()
 
                 nb_jours = (date_fin - date_debut).days + 1
                 montant_total = nb_jours * vehicule.prix_jour
@@ -148,7 +259,7 @@ def paiement(request, reservation_id):
 
     if request.method == 'POST':
         mode_paiement = request.POST.get('mode_paiement')
-        time.sleep(2)
+        time.sleep(2)  # Simule le délai de paiement
         Paiement.objects.create(
             reservation=reservation,
             montant=reservation.montant_total,
@@ -176,136 +287,48 @@ def confirmation_paiement(request, reservation_id):
     })
 
 
-def inscription(request):
+# ---------------------------
+# Tableau de bord client
+# ---------------------------
+@login_required(login_url='accueil')
+def dashboard(request):
+    client = request.user.client
+    reservations = Reservation.objects.filter(client=client).select_related('vehicule').order_by('-date_debut')
+
+    filtre_statut = request.GET.get('statut', '').strip()
+    if filtre_statut:
+        reservations = reservations.filter(statut__iexact=filtre_statut)
+
+    stats = {
+        'total': reservations.count(),
+        'en_attente': reservations.filter(statut='en attente').count(),
+        'confirmee': reservations.filter(statut='confirmée').count(),
+        'annulee': reservations.filter(statut='annulée').count(),
+        'montant_total': reservations.exclude(statut='annulée').aggregate(total=Sum('montant_total'))['total'] or 0,
+    }
+
+    for reservation in reservations:
+        reservation.duree = (reservation.date_fin - reservation.date_debut).days + 1
+
+    context = {
+        'reservations': reservations,
+        'stats': stats,
+        'filtre_statut': filtre_statut,
+    }
+    return render(request, 'core/dashboard.html', context)
+
+
+@login_required(login_url='accueil')
+def annuler_reservation(request, reservation_id):
     if request.method == 'POST':
-        nom = request.POST.get('nom')
-        prenom = request.POST.get('prenom')
-        email = request.POST.get('email')
-        telephone = request.POST.get('telephone')
-        adresse = request.POST.get('adresse', '')
-        password = request.POST.get('password')
-        password_confirm = request.POST.get('password_confirm')
+        client = request.user.client
+        reservation = get_object_or_404(Reservation, id=reservation_id, client=client)
 
-        # Vérification mots de passe
-        if password != password_confirm:
-            messages.error(request, '❌ Les mots de passe ne correspondent pas.')
-            return render(request, 'core/accueil.html', {
-                'nom': nom,
-                'prenom': prenom,
-                'email': email,
-                'telephone': telephone,
-                'adresse': adresse,
-                'open_modal': True,
-                'active_tab': 'register'
-            })
-
-        # Vérification complexité
-        pattern = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]).{8,}$'
-        if not re.match(pattern, password):
-            messages.error(request,
-                '❌ Le mot de passe doit contenir au moins 8 caractères, '
-                'une majuscule, un chiffre et un caractère spécial.')
-            return render(request, 'core/accueil.html', {
-                'nom': nom,
-                'prenom': prenom,
-                'email': email,
-                'telephone': telephone,
-                'adresse': adresse,
-                'open_modal': True,
-                'active_tab': 'register'
-            })
-
-        # Vérification email existant
-        if User.objects.filter(username=email).exists():
-            messages.error(request, '❌ Cet email est déjà utilisé.')
-            return render(request, 'core/accueil.html', {
-                'nom': nom,
-                'prenom': prenom,
-                'email': email,
-                'telephone': telephone,
-                'adresse': adresse,
-                'open_modal': True,
-                'active_tab': 'register'
-            })
-
-        # Création User et Client
-        user = User.objects.create_user(
-            username=email,
-            email=email,
-            password=password,
-            first_name=prenom,
-            last_name=nom
-        )
-        Client.objects.create(
-            nom=nom,
-            prenom=prenom,
-            email=email,
-            telephone=telephone,
-            adresse=adresse,
-        )
-
-        login(request, user)
-        messages.success(request, '✅ Inscription réussie ! Bienvenue !')
-        return redirect('accueil')
-
-    return redirect('accueil')
-
-
-def connexion(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        remember_me = request.POST.get('remember_me')
-        user = authenticate(request, username=email, password=password)
-
-        if user:
-            login(request, user)
-            if not remember_me:
-                request.session.set_expiry(0)
-            messages.success(request, f'✅ Bienvenue {user.first_name} !')
-            return redirect('accueil')
+        if reservation.statut == 'annulée':
+            messages.warning(request, '⚠️ Cette réservation est déjà annulée.')
         else:
-            messages.error(request, '❌ Email ou mot de passe incorrect.')
-            return redirect('accueil')
+            reservation.statut = 'annulée'
+            reservation.save()
+            messages.success(request, '✅ Réservation annulée avec succès.')
 
-    return redirect('accueil')
-
-
-def deconnexion(request):
-    logout(request)
-    messages.success(request, '👋 Vous êtes déconnecté.')
-    return redirect('accueil')
-
-
-def agences(request):
-    agences = [
-        {
-            "nom": "AutoDrive Lomé",
-            "adresse": "Quartier A, Rue 123, Lomé",
-            "telephone": "+228 90 00 00 01",
-            "email": "lome@autodrive.com",
-            "lat": 6.1319,    # latitude Lomé
-            "lng": 1.2228,    # longitude Lomé
-            "photo": None
-        },
-        {
-            "nom": "AutoDrive Kara",
-            "adresse": "Quartier B, Rue 456, Kara",
-            "telephone": "+228 90 00 00 02",
-            "email": "kara@autodrive.com",
-            "lat": 9.5509,    # latitude Kara
-            "lng": 1.1840,    # longitude Kara
-            "photo": None
-        },
-        {
-            "nom": "AutoDrive Sokodé",
-            "adresse": "Quartier C, Rue 789, Sokodé",
-            "telephone": "+228 90 00 00 03",
-            "email": "sokode@autodrive.com",
-            "lat": 8.9833,
-            "lng": 1.1333,
-            "photo": None
-        },
-        # Ajoute d'autres agences ici
-    ]
-    return render(request, "core/agences.html", {"agences": agences})
+    return redirect('dashboard')

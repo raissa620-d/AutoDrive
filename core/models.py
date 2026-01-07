@@ -3,16 +3,17 @@ from django.db import models
 # Create your models here.
 from django.db import models
 
+from django.db import models
+from django.contrib.auth.models import User
+
 class Client(models.Model):
-    nom = models.CharField(max_length=100)
-    prenom = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     telephone = models.CharField(max_length=20)
     adresse = models.CharField(max_length=255)
-    mot_de_passe = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.prenom} {self.nom}"
+        return self.user.get_full_name() or self.user.username
+
 
 
 class Vehicule(models.Model):

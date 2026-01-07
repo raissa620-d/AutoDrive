@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactez-nous - AutoDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #001f3f;
+            --accent: #FFD700;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            background: url('{% static "images/agences.jpg" %}') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Overlay sombre pour la lisibilité */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        /* --- HEADER (Repris de tes autres pages) --- */
+        .site-header {
+            background: var(--primary);
+            padding: 0.75rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo { height: 40px; border-radius: 4px; }
+        .brand-name { color: var(--white); font-weight: 700; font-size: 1.3rem; }
+
+        .main-nav a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .main-nav a:hover { color: var(--accent); }
+
+        /* --- CONTACT SECTION --- */
+        .contact-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .contact-card {
+            background: var(--glass);
+            max-width: 1000px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Colonne de gauche : Infos */
+        .contact-info {
+            background: var(--primary);
+            color: var(--white);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .contact-info h2 { font-size: 2rem; margin-bottom: 20px; color: var(--accent); }
+        .contact-info p { opacity: 0.8; margin-bottom: 40px; }
+
+        .info-details { list-style: none; }
+        .info-details li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .info-details i {
+            color: var(--accent);
+            font-size: 1.2rem;
+            width: 25px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .social-links a {
+            color: var(--white);
+            font-size: 1.5rem;
+            transition: 0.3s;
+        }
+        .social-links a:hover { color: var(--accent); transform: translateY(-3px); }
+
+        /* Colonne de droite : Formulaire */
+        .contact-form {
+            padding: 50px;
+            background: var(--white);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 31, 63, 0.05);
+        }
+
+        .btn-send {
+            width: 100%;
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-send:hover {
+            background: #003366;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 31, 63, 0.2);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 850px) {
+            .contact-card { grid-template-columns: 1fr; }
+            .contact-info { padding: 40px; }
+            .form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <a href="{% url 'accueil' %}" class="brand">
+            <img src="{% static 'images/logo.jpg' %}" alt="AutoDrive" class="logo">
+            <span class="brand-name">AutoDrive</span>
+        </a>
+        <nav class="main-nav">
+            <a href="{% url 'accueil' %}">Accueil</a>
+            <a href="{% url 'liste_vehicules' %}">Véhicules</a>
+            <a href="{% url 'agences' %}">Agences</a>
+            <a href="#" style="color: var(--accent);">Contact</a>
+        </nav>
+    </header>
+
+    <main class="contact-container">
+        <div class="contact-card">
+            <div class="contact-info">
+                <div>
+                    <h2>Contactez-nous</h2>
+                    <p>Une question ? Une demande particulière ? Notre équipe vous répond en moins de 24h.</p>
+
+                    <ul class="info-details">
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <span>+228 90 00 00 00</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>contact@autodrive.tg</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>Boulevard du 13 Janvier, Lomé, Togo</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-clock"></i>
+                            <span>Lun - Sam : 08:00 - 18:00</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Nom complet</label>
+                            <input type="text" name="name" placeholder="Ex: Jean Dupont" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Email</label>
+                            <input type="email" name="email" placeholder="exemple@mail.com" required>
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Sujet</label>
+                            <input type="text" name="subject" placeholder="De quoi s'agit-il ?" required>
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Message</label>
+                            <textarea name="message" rows="5" placeholder="Votre message ici..." required></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-send">
+                        <span>Envoyer le message</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 20px; color: white; opacity: 0.7; font-size: 0.9rem;">
+        © 2026 AutoDrive - Service Client Premium
+    </footer>
+
+</body>
+</html>
